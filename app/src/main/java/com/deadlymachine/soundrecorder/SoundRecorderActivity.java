@@ -2,9 +2,11 @@ package com.deadlymachine.soundrecorder;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -42,9 +44,10 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
     private MediaRecorder mMediaRecorder = null;
     private MediaPlayer mMediaPlayer = null;
     private Chronometer mChronometer = null;
+    private AudioManager mAudioManager;
     private File outDir;
     private String outputFile = null;
-    private Button mStartButton, mStopButton;
+    private Button mRecordButton, mStopButton, mPlayButton;
     private boolean isPermissionGranted = false;
     private boolean isStopPressed = false;
     private boolean isMediaRecording = false;
@@ -58,11 +61,14 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.RECORD_AUDIO}, 1);
         outDir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
+        mAudioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
         mRecorderStatus = (TextView) findViewById(R.id.recorderStatus);
         mChronometer = (Chronometer) findViewById(R.id.chronometer);
-        mStartButton = (Button) findViewById(R.id.button1);
-        mStartButton.setClickable(true);
-        mStartButton.setOnClickListener(new View.OnClickListener() {
+        mRecordButton = (Button) findViewById(R.id.button1);
+        mStopButton = (Button) findViewById(R.id.button2);
+        mPlayButton = (Button) findViewById(R.id.button3);
+        mRecordButton.setClickable(true);
+        mRecordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isPermissionGranted) {
@@ -72,8 +78,9 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                         mMediaRecorder.start();
                         mChronometer.setBase(SystemClock.elapsedRealtime());
                         mChronometer.start();
-                        mStartButton.setClickable(false);
+                        mRecordButton.setClickable(false);
                         mStopButton.setClickable(true);
+                        mPlayButton.setVisibility(View.GONE);
                         isMediaRecording = true;
                         mRecorderStatus.setText("Listening");
                     } catch (Exception e) {
@@ -84,7 +91,6 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                 }
             }
         });
-        mStopButton = (Button) findViewById(R.id.button2);
         mStopButton.setClickable(false);
         mStopButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,10 +101,21 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                     mMediaRecorder = null;
                     isStopPressed = true;
                     isMediaRecording = false;
+                    mChronometer.stop();
+                    mChronometer.setBase(SystemClock.elapsedRealtime());
+                    mRecorderStatus.setText("Stopped");
+                    mPlayButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mAudioManager.getRingerMode() != AudioManager.RINGER_MODE_SILENT) {
+                    mRecordButton.setClickable(false);
+                    mStopButton.setClickable(false);
                     mRecorderStatus.setText("Playing");
                     try {
-                        mChronometer.stop();
-                        mChronometer.setBase(SystemClock.elapsedRealtime());
                         mMediaPlayer = new MediaPlayer();
                         mMediaPlayer.setDataSource(outputFile);
                         mMediaPlayer.setVolume(7.0f, 7.0f);
@@ -108,6 +125,8 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Your device is in Silent mode", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -186,8 +205,9 @@ public class SoundRecorderActivity extends AppCompatActivity implements BackHand
     }
 
     private void setOnCompletion() {
-        mStartButton.setClickable(true);
+        mRecordButton.setClickable(true);
         mStopButton.setClickable(false);
+        mPlayButton.setVisibility(View.GONE);
         mRecorderStatus.setText("Start Recording");
     }
 
