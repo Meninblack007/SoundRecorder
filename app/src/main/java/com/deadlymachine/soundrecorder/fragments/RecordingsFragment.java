@@ -41,6 +41,7 @@ public class RecordingsFragment extends Fragment {
     private ArrayAdapter<String> mArrayAdapter;
     private CharSequence options[] = new CharSequence[] {"Play", "Delete"};
     private boolean isMediaPlaying = false;
+    private boolean isFragmentOpened = false;
 
     @Nullable
     @Override
@@ -51,6 +52,7 @@ public class RecordingsFragment extends Fragment {
     }
 
     private void initViews(View view) {
+        setFragmentOpened(true);
         mBackHandlerInterface = (BackHandlerInterface) getActivity();
         mBackHandlerInterface.setSelectedFragment(this);
         final ListView mListView = (ListView) view.findViewById(R.id.listView);
@@ -118,5 +120,13 @@ public class RecordingsFragment extends Fragment {
 
     public boolean onBackPressed() {
         return false;
+    }
+
+    public boolean isFragmentOpened() {
+        return isFragmentOpened;
+    }
+
+    public void setFragmentOpened(boolean fragmentOpened) {
+        isFragmentOpened = fragmentOpened;
     }
 }
