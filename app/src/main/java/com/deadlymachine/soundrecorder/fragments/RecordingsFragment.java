@@ -100,7 +100,9 @@ public class RecordingsFragment extends Fragment {
                                 shareIntent.setAction(Intent.ACTION_SEND);
                                 shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.parse("file:///"+name));
                                 shareIntent.setType("audio/mp3");
-                                startActivity(Intent.createChooser(shareIntent, "Share audio File"));                        }
+                                startActivity(Intent.createChooser(shareIntent, "Share audio File"));
+                                break;
+                        }
                     }
                 });
                 alertDialog.show();
