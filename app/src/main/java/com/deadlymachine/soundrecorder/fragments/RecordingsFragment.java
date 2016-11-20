@@ -81,7 +81,7 @@ public class RecordingsFragment extends Fragment {
                             case 2:
                                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                                 alertDialog.setTitle("Delete Recording");
-                                alertDialog.setMessage("Do you want to Delete this Recording?");
+                                alertDialog.setMessage("Do you want to delete this Recording?");
                                 alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
