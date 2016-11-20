@@ -42,7 +42,7 @@ public class RecordingsFragment extends Fragment {
     private ArrayList mArrayList = new ArrayList();
     private Collection<File> recordingCollection = FileUtils.listFiles(outDir, new String[]{"mp3"}, false);
     private ArrayAdapter<String> mArrayAdapter;
-    private CharSequence options[] = new CharSequence[] {"Play", "Rename","Delete","Share"};
+    private CharSequence options[] = new CharSequence[]{"Play", "Rename", "Delete", "Share"};
     private boolean isMediaPlaying = false;
     private boolean isFragmentOpened = false;
 
@@ -83,14 +83,14 @@ public class RecordingsFragment extends Fragment {
                                 alertDialog.setTitle("Delete Recording");
                                 alertDialog.setMessage("Do you want to Delete this Recording?");
                                 alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                File file = new File(name);
-                                                boolean deleted = file.delete();
-                                                mArrayList.remove(position);
-                                                mArrayAdapter.notifyDataSetChanged();
-                                                Log.d(TAG, "File Path: " + name + ", Deleted: " + String.valueOf(deleted));
-                                            }
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        File file = new File(name);
+                                        boolean deleted = file.delete();
+                                        mArrayList.remove(position);
+                                        mArrayAdapter.notifyDataSetChanged();
+                                        Log.d(TAG, "File Path: " + name + ", Deleted: " + String.valueOf(deleted));
+                                    }
                                 });
                                 alertDialog.setNegativeButton("No", null);
                                 alertDialog.show();
@@ -98,7 +98,7 @@ public class RecordingsFragment extends Fragment {
                             case 3:
                                 Intent shareIntent = new Intent();
                                 shareIntent.setAction(Intent.ACTION_SEND);
-                                shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.parse("file:///"+name));
+                                shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///" + name));
                                 shareIntent.setType("audio/mp3");
                                 startActivity(Intent.createChooser(shareIntent, "Share audio File"));
                                 break;
@@ -146,17 +146,15 @@ public class RecordingsFragment extends Fragment {
         LayoutInflater inflater = this.getActivity().getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.rename_recording, null);
         dialogBuilder.setView(dialogView);
-
         final EditText newFileName = (EditText) dialogView.findViewById(R.id.newFileName);
-
         dialogBuilder.setTitle("Rename");
         dialogBuilder.setMessage("Enter new file name");
         dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                String oldName=name.substring(34,name.length());
-                String newName=newFileName.getText().toString()+".mp3";
-                Log.d("RecordingsFragment",oldName+" "+newName);
-                renameFile(oldName,newName);
+                String oldName = name.substring(34, name.length());
+                String newName = newFileName.getText().toString() + ".mp3";
+                Log.d("RecordingsFragment", oldName + " " + newName);
+                renameFile(oldName, newName);
             }
         });
         dialogBuilder.setNegativeButton("Cancel", null);
@@ -164,12 +162,12 @@ public class RecordingsFragment extends Fragment {
         b.show();
     }
 
-    public static void renameFile(String oldName,String newName){
+    public static void renameFile(String oldName, String newName) {
         File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "SoundRecorder");
-        if(dir.exists()){
-            File from = new File(dir,oldName);
-            File to = new File(dir,newName);
-            if(from.exists())
+        if (dir.exists()) {
+            File from = new File(dir, oldName);
+            File to = new File(dir, newName);
+            if (from.exists())
                 from.renameTo(to);
         }
     }
